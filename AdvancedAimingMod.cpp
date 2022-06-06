@@ -2,7 +2,7 @@
 #include "GTASA/common.h"
 #include "shared/CEvents.h"
 
-MYMOD(net.peepo.AdvancedAimingMod, AdvancedAimingMod, 1.0, GTAPLUGIN)
+MYMOD(net.peepo.AdvancedAimingMod, AdvancedAimingMod, 1.1, GTAPLUGIN)
 
 enum eWeaponAimOffset {
     AIM_OFFSET_WEAPON_DEFAULT,
@@ -43,6 +43,8 @@ void ReadSettings() {
     sscanf(line, "%s %d", dummy, &updateSets);
     fgets(line, 512, file);
     fgets(line, 512, file);
+    sscanf(line, "%s %d", dummy, &rightSide);
+    fgets(line, 512, file);
     sscanf(line, "%s %f", dummy, (float *)(libs.pGame + 0x6A9F40));
     fgets(line, 512, file);
     sscanf(line, "%s %f", dummy, (float *)(libs.pGame + 0x6A9F44));
@@ -78,7 +80,7 @@ DECL_HOOKv(MyProcess_AimWeapon, CCam *cam, CVector const &vec, float arg3, float
 	
     CPed *playa = FindPlayerPed();
     if (playa && !playa->m_nPedFlags.bInVehicle) {
-        int aimTypeId = -1;
+        int aimTypeId = 0;
         switch (playa->m_aWeapons[playa->m_nActiveWeaponSlot].m_nType) {
         case WEAPON_PISTOL: 
             aimTypeId = AIM_OFFSET_WEAPON_COLT45;
@@ -126,7 +128,7 @@ DECL_HOOKv(MyProcess_AimWeapon, CCam *cam, CVector const &vec, float arg3, float
             aimTypeId = AIM_OFFSET_WEAPON_FLAME;
             break;
         }
-		if (aimTypeId != -1) {
+        if (aimTypeId != -1) {
             CVector offset = gOffsets[aimTypeId];
 			
             // if rightSide flag enabled
